@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Habit - Habit Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-5">Add New Habit</h2>
+                <form method="POST">
+                    <div class="mb-4">
+                        <label for="name" class="form-label">Habit Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required placeholder="e.g., Drink 8 glasses of water">
+                    </div>
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Description (Optional)</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="e.g., Stay hydrated for better health and energy."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="frequency" class="form-label">Frequency</label>
+                        <select class="form-select" id="frequency" name="frequency" required>
+                            <option value="" disabled selected>Select frequency</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                        </select>
+                    </div>
+                     <div class="mb-4" id="goal-field" style="display: none;">
+                        <label for="goal" class="form-label">Goal (e.g., 5 times a week for weekly habits)</label>
+                        <input type="number" class="form-control" id="goal" name="goal" min="1" placeholder="Enter goal if weekly">
+                    </div>
+                    <div class="mb-5">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ today.strftime('%Y-%m-%d') }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">Add Habit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const frequencySelect = document.getElementById('frequency');
+        const goalField = document.getElementById('goal-field');
+
+        function toggleGoalField() {
+            if (frequencySelect.value === 'weekly') {
+                goalField.style.display = 'block';
+            } else {
+                goalField.style.display = 'none';
+                goalField.querySelector('input').value = ''; // Clear goal if not weekly
+            }
+        }
+
+        frequencySelect.addEventListener('change', toggleGoalField);
+
+        // Initial call to set correct state based on pre-selected value
+        toggleGoalField();
+    });
+</script>
+{% endblock %} 

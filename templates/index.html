@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Your Habits - Habit Tracker{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css">
+<style>
+    #calendar {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    }
+    .fc-event {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: var(--text-light);
+        font-size: 0.85em;
+        padding: 3px 5px;
+        border-radius: 5px;
+        margin-bottom: 2px;
+        word-wrap: break-word;
+        white-space: normal;
+        cursor: pointer;
+    }
+    .fc-event-done {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    .fc-event-missed {
+        background-color: #e74c3c;
+        border-color: #e74c3c;
+    }
+    .fc-daygrid-event-dot {
+        display: none;
+    }
+    .fc-daygrid-event-harness {
+        margin-bottom: 2px;
+    }
+    .fc-button-primary {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: var(--text-light) !important;
+    }
+    .fc-button-primary:hover {
+        background-color: #4a5a6a !important;
+        border-color: #4a5a6a !important;
+    }
+    .fc-toolbar-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--primary-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-5">Your Habits Calendar</h1>
+
+<div id="calendar"></div>
+
+<div id="habit-events-data" data-events="{{ events | safe }}" style="display: none;"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        console.log('Calendar element found:', calendarEl); // Log if element is found
+
+        try {
+            // Retrieve events data from the data attribute and parse it
+            var eventsDataElement = document.getElementById('habit-events-data');
+            var initialEvents = JSON.parse(eventsDataElement.dataset.events);
+            console.log('Initial events data:', initialEvents); // Log the data received
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: initialEvents, // Use the directly passed data
+                eventClick: function(info) {
+                    // Handle event click - e.g., toggle completion, show details
+                    console.log('Event clicked:', info.event.title, info.event.startStr, info.event.id);
+                    // Example: if you want to toggle completion:
+                    // fetch(`/toggle_completion/${info.event.id}`, { method: 'POST' })
+                    //     .then(response => response.json())
+                    //     .then(data => {
+                    //         if (data.success) {
+                    //             // Assuming a global flash function or similar
+                    //             alert('Habit completion toggled!'); 
+                    //             calendar.refetchEvents();
+                    //         }
+                    //     })
+                    //     .catch(error => console.error('Error toggling completion:', error));
+                },
+                dateClick: function(info) {
+                    // Handle date click - e.g., add new habit for this date
+                    console.log('Date clicked:', info.dateStr);
+                    // Example: redirect to add habit page with pre-filled date
+                    // window.location.href = `/add_habit?date=${info.dateStr}`;
+                }
+            });
+            calendar.render();
+            console.log('Calendar rendered.');
+        } catch (error) {
+            console.error('Error initializing FullCalendar:', error); // Log any initialization errors
+            alert('There was an error loading the calendar. Please check the console for details.');
+        }
+    });
+</script>
+{% endblock %} 
